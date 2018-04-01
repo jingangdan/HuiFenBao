@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
+import com.dq.huifenbao.openssl.Base64Utils;
+import com.dq.huifenbao.openssl.RSAUtils;
 import com.dq.huifenbao.zhifubao.AuthResult;
 import com.dq.huifenbao.zhifubao.PayResult;
 
@@ -22,6 +24,8 @@ import org.xutils.*;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 
+import java.net.URLEncoder;
+import java.security.PrivateKey;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -43,6 +47,7 @@ public class PayActivity extends Activity {
     ImageView ivPayBack;
     private String id;
     private String PATH = "";
+    private String PATH_RSA = "";
     private RequestParams params = null;
 
 
@@ -117,14 +122,24 @@ public class PayActivity extends Activity {
         x.Ext.init(this.getApplication());
         x.Ext.setDebug(org.xutils.BuildConfig.DEBUG);
 
-        id = getIntent().getStringExtra("id");
-        if (!TextUtils.isEmpty(id)) {
-            getOrder();
+       // id = getIntent().getStringExtra("id");
+        PATH_RSA = "id="+getIntent().getStringExtra("id");
+        if (!TextUtils.isEmpty(PATH_RSA)) {
+
+            try {
+                PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+                byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+                getOrder(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
+
+                // getUser(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public void getOrder() {
-        PATH = "http://huifenbao.dequanhuibao.com/Api/Index/getorder?id=" + id;
+    public void getOrder(String sign) {
+        PATH = "http://huifenbao.dequanhuibao.com/Api/Index/getorder?sign=" + sign;
         params = new RequestParams(PATH);
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
@@ -154,9 +169,10 @@ public class PayActivity extends Activity {
         });
     }
 
-    public void setPay() {
-        PATH = "http://huifenbao.dequanhuibao.com/Api/Index/pay?id=" + id;
+    public void setPay(String sign) {
+        PATH = "http://huifenbao.dequanhuibao.com/Api/Index/pay?sign=" + sign;
         params = new RequestParams(PATH);
+        Log.e("pay_pay",PATH);
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -189,8 +205,14 @@ public class PayActivity extends Activity {
 
     @OnClick(R.id.ll_pay)
     public void onViewClicked() {
-        if (!TextUtils.isEmpty(id)) {
-            setPay();
+        if (!TextUtils.isEmpty(PATH_RSA)) {
+            try {
+                PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+                byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+                setPay(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

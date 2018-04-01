@@ -15,10 +15,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.dq.huifenbao.openssl.Base64Utils;
+import com.dq.huifenbao.openssl.RSAUtils;
+
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.net.URLEncoder;
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +49,7 @@ public class SeeRecordActivity extends Activity {
 
     private String[] array;
     private String PATH = "";
+    private String PATH_RSA = "";
     private RequestParams params = null;
 
     private String idcard;
@@ -84,16 +90,27 @@ public class SeeRecordActivity extends Activity {
     @OnClick(R.id.butSeeRecord)
     public void onViewClicked() {
         setAcClear();
-        idcard = actvIdcard.getText().toString().trim();
-        if (!TextUtils.isEmpty(idcard)) {
-            getRecord();
+        //idcard = actvIdcard.getText().toString().trim();
+        PATH_RSA = "idcard="+actvIdcard.getText().toString().trim();
+        if (!TextUtils.isEmpty(PATH_RSA)) {
+
+            try {
+                PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+                byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+                getRecord(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
+
+                // getUser(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
     String record_result;
 
-    public void getRecord() {
-        PATH = "http://huifenbao.dequanhuibao.com/Api/Index/search?idcard=" + idcard;
+    public void getRecord(String sign) {
+        PATH = "http://huifenbao.dequanhuibao.com/Api/Index/search?sign=" + sign;
         params = new RequestParams(PATH);
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override

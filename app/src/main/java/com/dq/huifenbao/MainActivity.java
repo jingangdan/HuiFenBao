@@ -18,9 +18,16 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.dq.huifenbao.openssl.Base64Utils;
+import com.dq.huifenbao.openssl.RSAUtils;
+
 import org.xutils.*;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
+
+import java.net.URLEncoder;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -52,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private String string_result;
 
     private String[] array;
+
+    private String PATH_RSA = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,20 +99,29 @@ public class MainActivity extends AppCompatActivity {
         inputmanger.hideSoftInputFromWindow(this.getWindow().peekDecorView().getWindowToken(), 0);
 
         //idcard = etIdcard.getText().toString().trim();
-        idcard = actvIdcard.getText().toString().trim();
+       // idcard = actvIdcard.getText().toString().trim();
+        PATH_RSA = "idcard="+actvIdcard.getText().toString().trim();
 
-        if (!TextUtils.isEmpty(idcard)) {
-            getUser();
+        if (!TextUtils.isEmpty(PATH_RSA)) {
+            try {
+                PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+                byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+                getUser(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @OnClick({R.id.butOk, R.id.butSearch})
     public void onViewClicked(View view) {
-       // idcard = etIdcard.getText().toString().trim();
+        // idcard = etIdcard.getText().toString().trim();
         idcard = actvIdcard.getText().toString().trim();
         name = etName.getText().toString().trim();
         mobile = etPhone.getText().toString().trim();
         money = etMoney.getText().toString().trim();
+
+        PATH_RSA = "idcard="+idcard+"&name="+name+"&mobile="+mobile+"&money="+money;
 
         switch (view.getId()) {
             case R.id.butOk:
@@ -111,7 +129,17 @@ public class MainActivity extends AppCompatActivity {
                     if (!TextUtils.isEmpty(name)) {
                         if (!TextUtils.isEmpty(mobile)) {
                             if (!TextUtils.isEmpty(money)) {
-                                addOrder();
+                                try {
+                                    PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+                                    byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+                                    addOrder(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
+
+                                   // getUser(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+
                             } else {
                                 Toast.makeText(this, "请输入还款金额", Toast.LENGTH_SHORT).show();
                             }
@@ -133,10 +161,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void getUser() {
-        PATH = "http://huifenbao.dequanhuibao.com/Api/Index/getuser?idcard=" + idcard;
+    public void getUser(String afterencrypt) {
+        // PATH = "http://huifenbao.dequanhuibao.com/Api/Index/getuser?idcard=" + idcard;
+        PATH = "http://huifenbao.dequanhuibao.com/Api/Index/getuser?sign=" + afterencrypt;
         params = new RequestParams(PATH);
-        System.out.println("getUser = " + PATH);
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -156,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(string_result)) {
                     ErrorInfo errorInfo = GsonUtil.gsonIntance().gsonToBean(string_result, ErrorInfo.class);
                     if (errorInfo.getStatus() == 1) {
-                       // Toast.makeText(MainActivity.this, "" + errorInfo.getData().toString(), Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(MainActivity.this, "" + errorInfo.getData().toString(), Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -177,13 +205,15 @@ public class MainActivity extends AppCompatActivity {
 
     private String order_result;
 
-    public void addOrder() {
-        PATH = "http://huifenbao.dequanhuibao.com/Api/Index/addorder?";
+    public void addOrder(String sign) {
+        PATH = "http://huifenbao.dequanhuibao.com/Api/Index/addorder?sign="+sign;
         params = new RequestParams(PATH);
-        params.addBodyParameter("idcard", idcard);
-        params.addBodyParameter("name", name);
-        params.addBodyParameter("mobile", mobile);
-        params.addBodyParameter("money", money);
+//        params.addBodyParameter("idcard", idcard);
+//        params.addBodyParameter("name", name);
+//        params.addBodyParameter("mobile", mobile);
+//        params.addBodyParameter("money", money);
+
+        Log.e("mian_addorder",PATH);
 
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
@@ -231,10 +261,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //判断登录的账号有没有保存，没有就保存起来，替换一个最久没登录的
-    public static void phones(Context context, String[]array, String phone){
+    public static void phones(Context context, String[] array, String phone) {
         //当 phone 是新登录的账号的时候
         boolean trfa = (!phone.equals(array[0]) && !phone.equals(array[1]) && !phone.equals(array[2]));
-        if(trfa){
+        if (trfa) {
             //循环一下，将最后一个替换成新的
             MySharedPreferences.setPhone3(array[1], context);
             MySharedPreferences.setPhone2(array[0], context);
