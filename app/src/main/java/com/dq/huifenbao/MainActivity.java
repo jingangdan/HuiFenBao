@@ -75,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setAutoCompleteTextView();
+    }
+
     public void setAutoCompleteTextView() {
         array = new String[3];
         array[0] = MySharedPreferences.getPhone1(this) + "";

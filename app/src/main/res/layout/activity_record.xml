@@ -7,12 +7,12 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="84px"
+        android:layout_height="48dp"
         android:background="#000">
 
         <ImageView
             android:id="@+id/ivBack"
-            android:layout_margin="10px"
+            android:layout_margin="5dp"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             android:layout_alignParentLeft="true"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:text="慧分宝还款记录"
             android:textColor="#fff"
-            android:textSize="38px" />
+            android:textSize="18dp" />
 
     </RelativeLayout>
 
@@ -35,15 +35,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24px">
+        android:padding="10dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5px"
+            android:layout_marginBottom="3dp"
             android:text="身份证号："
             android:textColor="#000"
-            android:textSize="24px" />
+            android:textSize="14dp" />
 
         <AutoCompleteTextView
             android:id="@+id/actvIdcards"
@@ -51,8 +51,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/kuang_style"
             android:hint="请输入身份证号，将作为唯一凭证"
-            android:padding="15px"
-            android:textSize="24px"
+            android:padding="8dp"
+            android:textSize="12dp"
             android:textColorHint="#707070"/>
 
     </LinearLayout>
@@ -63,15 +63,15 @@
 
         <Button
             android:id="@+id/butSeeRecord"
-            android:paddingRight="10px"
-            android:paddingLeft="10px"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
             android:layout_width="wrap_content"
-            android:layout_height="64px"
-            android:layout_margin="24px"
+            android:layout_height="32dp"
+            android:layout_margin="10dp"
             android:background="@drawable/kuang_green"
             android:text="查看还款记录"
             android:textColor="#fff"
-            android:textSize="24px" />
+            android:textSize="12dp" />
 
     </LinearLayout>
 
@@ -79,18 +79,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24px">
+        android:padding="10dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15px"
+            android:layout_marginBottom="8dp"
             android:text="查询结果" />
 
         <TextView
             android:id="@+id/tvNoRecord"
             android:visibility="gone"
-            android:padding="15px"
+            android:padding="8dp"
             android:background="@drawable/kuang_style"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
