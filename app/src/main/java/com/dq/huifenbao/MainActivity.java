@@ -1,10 +1,15 @@
 package com.dq.huifenbao;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,7 +25,14 @@ import android.widget.Toast;
 
 import com.dq.huifenbao.openssl.Base64Utils;
 import com.dq.huifenbao.openssl.RSAUtils;
+import com.pgyersdk.crash.PgyCrashManager;
+import com.pgyersdk.feedback.PgyFeedback;
+import com.pgyersdk.feedback.PgyFeedbackShakeManager;
+import com.pgyersdk.update.PgyUpdateManager;
+import com.pgyersdk.update.UpdateManagerListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.*;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
@@ -62,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
     private String PATH_RSA = "";
 
+    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSIONS = 1;
+    private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +85,69 @@ public class MainActivity extends AppCompatActivity {
 
         x.Ext.init(this.getApplication());
         x.Ext.setDebug(org.xutils.BuildConfig.DEBUG);
+
+        PgyCrashManager.register(this);
+
+        PgyFeedback.getInstance().setMoreParam("tao", "PgyFeedbackShakeManager");
+
+        PgyFeedbackShakeManager.setShakingThreshold(1000);
+
+        PgyUpdateManager.register(MainActivity.this,
+                new UpdateManagerListener() {
+                    @Override
+                    public void onUpdateAvailable(final String result) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("更新")
+                                .setMessage("有新版本上线，是否更新？")
+                                .setNeutralButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                    }
+                                })
+                                .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String url;
+                                        JSONObject jsonData;
+                                        try {
+                                            jsonData = new JSONObject(
+                                                    result);
+                                            if ("0".equals(jsonData.getString("code"))) {
+                                                JSONObject jsonObject = jsonData
+                                                        .getJSONObject("data");
+                                                url = jsonObject
+                                                        .getString("downloadURL");
+
+                                                startDownloadTask(
+                                                        MainActivity.this,
+                                                        url);
+                                            }
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }).show();
+
+                    }
+
+                    @Override
+                    public void onNoUpdateAvailable() {
+                        Toast.makeText(getApplicationContext(), "没有更新", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        //动态请求权限
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSIONS);
+                requestPermissions(
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
+            }
+        }
 
         setAutoCompleteTextView();
 
@@ -105,8 +183,8 @@ public class MainActivity extends AppCompatActivity {
         inputmanger.hideSoftInputFromWindow(this.getWindow().peekDecorView().getWindowToken(), 0);
 
         //idcard = etIdcard.getText().toString().trim();
-       // idcard = actvIdcard.getText().toString().trim();
-        PATH_RSA = "idcard="+actvIdcard.getText().toString().trim();
+        // idcard = actvIdcard.getText().toString().trim();
+        PATH_RSA = "idcard=" + actvIdcard.getText().toString().trim();
 
         if (!TextUtils.isEmpty(PATH_RSA)) {
             try {
@@ -127,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
         mobile = etPhone.getText().toString().trim();
         money = etMoney.getText().toString().trim();
 
-        PATH_RSA = "idcard="+idcard+"&name="+name+"&mobile="+mobile+"&money="+money;
+        PATH_RSA = "idcard=" + idcard + "&name=" + name + "&mobile=" + mobile + "&money=" + money;
 
         switch (view.getId()) {
             case R.id.butOk:
@@ -140,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                                     byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
                                     addOrder(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
 
-                                   // getUser(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
+                                    // getUser(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -212,14 +290,14 @@ public class MainActivity extends AppCompatActivity {
     private String order_result;
 
     public void addOrder(String sign) {
-        PATH = "http://huifenbao.dequanhuibao.com/Api/Index/addorder?sign="+sign;
+        PATH = "http://huifenbao.dequanhuibao.com/Api/Index/addorder?sign=" + sign;
         params = new RequestParams(PATH);
 //        params.addBodyParameter("idcard", idcard);
 //        params.addBodyParameter("name", name);
 //        params.addBodyParameter("mobile", mobile);
 //        params.addBodyParameter("money", money);
 
-        Log.e("mian_addorder",PATH);
+        Log.e("mian_addorder", PATH);
 
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
@@ -303,6 +381,48 @@ public class MainActivity extends AppCompatActivity {
 
         }
         return false;
+    }
+
+    @Override
+    protected void onPause() {
+        PgyFeedbackShakeManager.unregister();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        PgyFeedbackShakeManager.register(MainActivity.this, false);
+//        PgyUpdateManager.unregister();
+        super.onResume();
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_WRITE_EXTERNAL_STORAGE: {
+                for (int i = 0; i < permissions.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    } else {
+                    }
+                }
+            }
+            case REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSIONS: {
+                for (int i = 0; i < permissions.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(this, "允许读写存储！", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "未允许读写存储！", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+            break;
+            default: {
+                super.onRequestPermissionsResult(requestCode, permissions,
+                        grantResults);
+            }
+        }
     }
 
 }

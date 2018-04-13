@@ -17,10 +17,20 @@ buildscript {
     }
 }
 
+//allprojects {
+//    repositories {
+//        jcenter()
+//        maven { url 'https://maven.google.com' }
+//    }
+//}
+
 allprojects {
     repositories {
         jcenter()
-        maven { url 'https://maven.google.com' }
+        maven { url "https://raw.githubusercontent.com/Pgyer/mvn_repo_pgyer/master" }
+        maven {
+            url "https://maven.google.com"
+        }
     }
 }
 

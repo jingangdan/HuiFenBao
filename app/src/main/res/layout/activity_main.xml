@@ -1,170 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ll_mian"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
     android:orientation="vertical"
+    android:scrollbars="none"
     tools:context="com.dq.huifenbao.MainActivity">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="#000"
-        android:gravity="center">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="慧分宝还款"
-            android:textColor="#fff"
-            android:textSize="18dp" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="10dp">
-
-        <ImageView
-            android:layout_width="84dp"
-            android:layout_height="84dp"
-            android:src="@mipmap/ic_launcher" />
-
-    </RelativeLayout>
-
     <LinearLayout
+        android:id="@+id/ll_mian"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_height="match_parent"
+        android:background="#fff"
+        android:orientation="vertical">
 
-        <TextView
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="#000"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="惠分宝还款"
+                android:textColor="#fff"
+                android:textSize="18dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:text="身份证号："
-            android:textColor="#000"
+            android:gravity="center"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="84dp"
+                android:layout_height="84dp"
+                android:src="@mipmap/ic_launcher" />
+
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/kuang_red"
+            android:text=" 请输入贷款客户信息还款，否则视为无效还款。"
+            android:textColor="#a94442"
             android:textSize="14dp" />
 
-        <EditText
-            android:visibility="gone"
-            android:id="@+id/etIdcard"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/kuang_style"
-            android:hint="请输入身份证号，将作为唯一凭证"
-            android:padding="15px"
-            android:textSize="24px" />
+            android:orientation="vertical"
+            android:padding="10dp">
 
-        <AutoCompleteTextView
-            android:id="@+id/actvIdcard"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:text="身份证号："
+                android:textColor="#000"
+                android:textSize="14dp" />
+
+            <EditText
+                android:id="@+id/etIdcard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/kuang_style"
+                android:hint="请输入身份证号，将作为唯一凭证"
+                android:padding="15px"
+                android:textSize="24px"
+                android:visibility="gone" />
+
+            <AutoCompleteTextView
+                android:id="@+id/actvIdcard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/kuang_style"
+                android:hint="请输入身份证号，将作为唯一凭证"
+                android:padding="8dp"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/kuang_style"
-            android:hint="请输入身份证号，将作为唯一凭证"
-            android:padding="8dp"
-            android:textSize="12dp" />
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:text="姓名："
+                android:textColor="#000"
+                android:textSize="14dp" />
+
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/kuang_style"
+                android:hint="请输入姓名"
+                android:padding="8dp"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5px"
+                android:text="手机号："
+                android:textColor="#000"
+                android:textSize="14dp" />
+
+            <EditText
+                android:id="@+id/etPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/kuang_style"
+                android:hint="请输入手机号"
+                android:inputType="number"
+                android:padding="8dp"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5px"
+                android:text="还款金额："
+                android:textColor="#000"
+                android:textSize="14dp" />
+
+            <EditText
+                android:id="@+id/etMoney"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/kuang_style"
+                android:hint="请输入还款金额"
+                android:inputType="numberDecimal"
+                android:padding="8dp"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/butOk"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/kuang_green"
+            android:text="提交"
+            android:textColor="#fff" />
+
+        <Button
+            android:id="@+id/butSearch"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/kuang_green2"
+            android:text="查询还款记录"
+            android:textColor="#5CB85C" />
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:text="姓名："
-            android:textColor="#000"
-            android:textSize="14dp" />
-
-        <EditText
-            android:id="@+id/etName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/kuang_style"
-            android:hint="请输入姓名"
-            android:padding="8dp"
-            android:textSize="12dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5px"
-            android:text="手机号："
-            android:textColor="#000"
-            android:textSize="14dp" />
-
-        <EditText
-            android:id="@+id/etPhone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/kuang_style"
-            android:hint="请输入手机号"
-            android:inputType="number"
-            android:padding="8dp"
-            android:textSize="12dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5px"
-            android:text="还款金额："
-            android:textColor="#000"
-            android:textSize="14dp" />
-
-        <EditText
-            android:id="@+id/etMoney"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/kuang_style"
-            android:hint="请输入还款金额"
-            android:inputType="numberDecimal"
-            android:padding="8dp"
-            android:textSize="12dp" />
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/butOk"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/kuang_green"
-        android:text="提交"
-        android:textColor="#fff" />
-
-    <Button
-        android:id="@+id/butSearch"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/kuang_green2"
-        android:text="查询还款记录"
-        android:textColor="#5CB85C" />
-
-</LinearLayout>
+</ScrollView>

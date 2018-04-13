@@ -9,7 +9,7 @@ android {
         //noinspection GradleCompatible
         targetSdkVersion 27
         versionCode 2
-        versionName "1.1"
+        versionName "1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -33,4 +33,5 @@ dependencies {
     compile project(':xutils')
     compile 'com.jakewharton:butterknife:7.0.1'
     compile files('libs/gson-2.3.1.jar')
+    compile files('libs/pgyer_sdk_2.8.3.jar')
 }
