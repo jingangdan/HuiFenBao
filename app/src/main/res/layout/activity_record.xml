@@ -12,19 +12,19 @@
 
         <ImageView
             android:id="@+id/ivBack"
-            android:layout_margin="5dp"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentLeft="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_back"/>
+            android:layout_alignParentLeft="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:src="@mipmap/ic_back" />
 
         <TextView
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:text="惠分宝还款记录"
             android:textColor="#fff"
             android:textSize="18dp" />
@@ -50,10 +50,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/kuang_style"
+            android:focusable="false"
             android:hint="请输入身份证号，将作为唯一凭证"
             android:padding="8dp"
-            android:textSize="12dp"
-            android:textColorHint="#707070"/>
+            android:textColorHint="#707070"
+            android:textSize="12dp" />
 
     </LinearLayout>
 
@@ -63,12 +64,12 @@
 
         <Button
             android:id="@+id/butSeeRecord"
-            android:paddingRight="5dp"
-            android:paddingLeft="5dp"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_margin="10dp"
             android:background="@drawable/kuang_green"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
             android:text="查看还款记录"
             android:textColor="#fff"
             android:textSize="12dp" />
@@ -89,18 +90,18 @@
 
         <TextView
             android:id="@+id/tvNoRecord"
-            android:visibility="gone"
-            android:padding="8dp"
-            android:background="@drawable/kuang_style"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="没有记录"/>
+            android:background="@drawable/kuang_style"
+            android:padding="8dp"
+            android:text="没有记录"
+            android:visibility="gone" />
 
         <ListView
-            android:divider="#fff"
             android:id="@+id/listView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:divider="#fff">
 
         </ListView>
 

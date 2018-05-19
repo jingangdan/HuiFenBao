@@ -1,4 +1,4 @@
-package com.dq.huifenbao;
+package com.dq.huifenbao.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +15,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.dq.huifenbao.bean.UserInfo2;
+import com.dq.huifenbao.utils.GsonUtil;
+import com.dq.huifenbao.utils.MySharedPreferences;
+import com.dq.huifenbao.R;
+import com.dq.huifenbao.adapter.RecordAdapter;
+import com.dq.huifenbao.bean.Record;
 import com.dq.huifenbao.openssl.Base64Utils;
 import com.dq.huifenbao.openssl.RSAUtils;
 
@@ -62,12 +68,17 @@ public class SeeRecordActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
         ButterKnife.bind(this);
-
+        setUI();
         mAdapter = new RecordAdapter(this, list);
         listView.setAdapter(mAdapter);
 
+        //setAutoCompleteTextView();
+    }
 
-        setAutoCompleteTextView();
+    public void setUI() {
+        if (!TextUtils.isEmpty(MySharedPreferences.getPreference(this, "idcard"))) {
+            actvIdcard.setText(MySharedPreferences.getPreference(this, "idcard"));
+        }
     }
 
     public void setAutoCompleteTextView() {
@@ -91,7 +102,7 @@ public class SeeRecordActivity extends Activity {
     public void onViewClicked() {
         setAcClear();
         //idcard = actvIdcard.getText().toString().trim();
-        PATH_RSA = "idcard="+actvIdcard.getText().toString().trim();
+        PATH_RSA = "idcard=" + actvIdcard.getText().toString().trim();
         if (!TextUtils.isEmpty(PATH_RSA)) {
 
             try {
@@ -130,8 +141,8 @@ public class SeeRecordActivity extends Activity {
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 if (!TextUtils.isEmpty(record_result)) {
-                    ErrorInfo errorInfo = GsonUtil.gsonIntance().gsonToBean(record_result, ErrorInfo.class);
-                    if (errorInfo.getStatus() == 0) {
+                    UserInfo2 u2 = GsonUtil.gsonIntance().gsonToBean(record_result, UserInfo2.class);
+                    if (u2.getStatus() == 0) {
                         tvNoRecord.setVisibility(View.VISIBLE);
                         listView.setVisibility(View.GONE);
                     }

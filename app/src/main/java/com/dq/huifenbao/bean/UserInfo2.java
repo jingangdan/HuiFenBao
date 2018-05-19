@@ -1,14 +1,14 @@
-package com.dq.huifenbao;
+package com.dq.huifenbao.bean;
 
 /**
- * Created by asus on 2018/3/31.
+ * Created by asus on 2018/5/18.
  */
 
-public class ErrorInfo {
+public class UserInfo2 {
 
     /**
-     * status : 1
-     * data : 用户不存在
+     * status : 0
+     * data : 账号或者密码错误
      */
 
     private int status;

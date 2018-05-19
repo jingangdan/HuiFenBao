@@ -1,4 +1,4 @@
-package com.dq.huifenbao;
+package com.dq.huifenbao.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +8,10 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.dq.huifenbao.utils.GsonUtil;
+import com.dq.huifenbao.R;
+import com.dq.huifenbao.bean.ZhiFuBao;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

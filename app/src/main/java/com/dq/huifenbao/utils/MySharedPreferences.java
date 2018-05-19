@@ -1,4 +1,4 @@
-package com.dq.huifenbao;
+package com.dq.huifenbao.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -46,5 +46,33 @@ public class MySharedPreferences {
         SharedPreferences.Editor e = share(context).edit();
         e.putString("phone3",phone3);
         e.apply();
+    }
+
+    public static final String SP_FILE = "dequan";//存数据名
+
+    /**
+     * 传入key，value，将数据存入Constant.SP_FILE(zzyj)中
+     *
+     * @param context 上下文对象
+     * @param key     键值
+     * @param value   数据
+     */
+    public static void savePreference(Context context, String key, String value) {
+        SharedPreferences preference = context.getSharedPreferences(SP_FILE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preference.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    /**
+     * 根据key值 从名为Constant.SP_FILE(zzyj)的SharedPreferences中取出数据
+     *
+     * @param context 上下文对象
+     * @param key     键值
+     * @return
+     */
+    public static String getPreference(Context context, String key) {
+        SharedPreferences preference = context.getSharedPreferences(SP_FILE, Context.MODE_PRIVATE);
+        return preference.getString(key, "");
     }
 }

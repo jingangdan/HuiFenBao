@@ -1,4 +1,4 @@
-package com.dq.huifenbao;
+package com.dq.huifenbao.bean;
 
 import java.util.List;
 

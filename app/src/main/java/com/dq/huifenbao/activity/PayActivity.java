@@ -1,4 +1,4 @@
-package com.dq.huifenbao;
+package com.dq.huifenbao.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -15,8 +15,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
+import com.dq.huifenbao.R;
+import com.dq.huifenbao.bean.GetOrder;
+import com.dq.huifenbao.bean.Pay;
 import com.dq.huifenbao.openssl.Base64Utils;
 import com.dq.huifenbao.openssl.RSAUtils;
+import com.dq.huifenbao.utils.GsonUtil;
 import com.dq.huifenbao.zhifubao.AuthResult;
 import com.dq.huifenbao.zhifubao.PayResult;
 
@@ -37,7 +41,7 @@ import butterknife.OnClick;
  */
 
 public class PayActivity extends Activity {
-    @Bind(R.id.tvOrdersn)
+    @Bind(com.dq.huifenbao.R.id.tvOrdersn)
     TextView tvOrdersn;
     @Bind(R.id.tvPayMoney)
     TextView tvPayMoney;

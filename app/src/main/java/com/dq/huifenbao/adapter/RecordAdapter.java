@@ -1,4 +1,4 @@
-package com.dq.huifenbao;
+package com.dq.huifenbao.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.dq.huifenbao.R;
+import com.dq.huifenbao.bean.Record;
 
 import java.util.List;
 

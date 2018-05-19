@@ -1,8 +1,7 @@
-package com.dq.huifenbao;
+package com.dq.huifenbao.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -23,8 +21,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.dq.huifenbao.R;
+import com.dq.huifenbao.bean.UserInfo1;
+import com.dq.huifenbao.bean.UserInfo2;
 import com.dq.huifenbao.openssl.Base64Utils;
 import com.dq.huifenbao.openssl.RSAUtils;
+import com.dq.huifenbao.utils.GsonUtil;
+import com.dq.huifenbao.utils.MySharedPreferences;
+import com.dq.huifenbao.utils.ToastUtils;
 import com.pgyersdk.crash.PgyCrashManager;
 import com.pgyersdk.feedback.PgyFeedback;
 import com.pgyersdk.feedback.PgyFeedbackShakeManager;
@@ -33,13 +37,13 @@ import com.pgyersdk.update.UpdateManagerListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xutils.*;
+import org.xutils.BuildConfig;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import java.net.URLEncoder;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -63,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     Button butSearch;
     @Bind(R.id.actvIdcard)
     AutoCompleteTextView actvIdcard;
+    @Bind(R.id.butOut)
+    Button butOut;
 
     private String idcard, name, mobile, money;
 
@@ -84,7 +90,9 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         x.Ext.init(this.getApplication());
-        x.Ext.setDebug(org.xutils.BuildConfig.DEBUG);
+        x.Ext.setDebug(BuildConfig.DEBUG);
+
+        setUI();
 
         PgyCrashManager.register(this);
 
@@ -149,9 +157,22 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        setAutoCompleteTextView();
+        // setAutoCompleteTextView();
 
     }
+
+    public void setUI() {
+        if (!TextUtils.isEmpty(MySharedPreferences.getPreference(this, "idcard"))) {
+            actvIdcard.setText(MySharedPreferences.getPreference(this, "idcard"));
+        }
+        if (!TextUtils.isEmpty(MySharedPreferences.getPreference(this, "name"))) {
+            etName.setText(MySharedPreferences.getPreference(this, "name"));
+        }
+        if (!TextUtils.isEmpty(MySharedPreferences.getPreference(this, "mobile"))) {
+            etPhone.setText(MySharedPreferences.getPreference(this, "mobile"));
+        }
+    }
+
 
     @Override
     protected void onRestart() {
@@ -176,28 +197,28 @@ public class MainActivity extends AppCompatActivity {
         actvIdcard.setThreshold(1);
     }
 
-    @OnClick(R.id.ll_mian)
-    public void onClick() {
-        // 隐藏虚拟键盘
-        InputMethodManager inputmanger = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputmanger.hideSoftInputFromWindow(this.getWindow().peekDecorView().getWindowToken(), 0);
+//    @OnClick(R.id.ll_mian)
+//    public void onClick() {
+//        // 隐藏虚拟键盘
+//        InputMethodManager inputmanger = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+//        inputmanger.hideSoftInputFromWindow(this.getWindow().peekDecorView().getWindowToken(), 0);
+//
+//        //idcard = etIdcard.getText().toString().trim();
+//        // idcard = actvIdcard.getText().toString().trim();
+//        PATH_RSA = "idcard=" + actvIdcard.getText().toString().trim();
+//
+//        if (!TextUtils.isEmpty(PATH_RSA)) {
+//            try {
+//                PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+//                byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+//                getUser(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
-        //idcard = etIdcard.getText().toString().trim();
-        // idcard = actvIdcard.getText().toString().trim();
-        PATH_RSA = "idcard=" + actvIdcard.getText().toString().trim();
-
-        if (!TextUtils.isEmpty(PATH_RSA)) {
-            try {
-                PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
-                byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
-                getUser(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @OnClick({R.id.butOk, R.id.butSearch})
+    @OnClick({R.id.butOk, R.id.butSearch, R.id.butOut})
     public void onViewClicked(View view) {
         // idcard = etIdcard.getText().toString().trim();
         idcard = actvIdcard.getText().toString().trim();
@@ -242,19 +263,41 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, SeeRecordActivity.class);
                 startActivity(intent);
                 break;
+
+            case R.id.butOut:
+                //退出
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("提示")
+                        .setMessage("确定退出吗？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                MySharedPreferences.savePreference(MainActivity.this, "isLogin", "");
+                                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                                MainActivity.this.finish();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                builder.create().dismiss();
+                            }
+                        });
+                builder.create().show();
+
+                break;
         }
     }
 
     public void getUser(String afterencrypt) {
         // PATH = "http://huifenbao.dequanhuibao.com/Api/Index/getuser?idcard=" + idcard;
         PATH = "http://huifenbao.dequanhuibao.com/Api/Index/getuser?sign=" + afterencrypt;
+        System.out.println("111 = " + PATH);
         params = new RequestParams(PATH);
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 string_result = result;
                 System.out.println("getUser = " + result);
-                UserInfo userInfo = GsonUtil.gsonIntance().gsonToBean(result, UserInfo.class);
+                UserInfo1 userInfo = GsonUtil.gsonIntance().gsonToBean(result, UserInfo1.class);
                 if (userInfo.getStatus() == 1) {
                     //Toast.makeText(MainActivity.this, "" + userInfo.getData().toString(), Toast.LENGTH_SHORT).show();
                     etName.setText(userInfo.getData().getName());
@@ -266,8 +309,8 @@ public class MainActivity extends AppCompatActivity {
             public void onError(Throwable ex, boolean isOnCallback) {
                 System.out.println("error = " + ex);
                 if (!TextUtils.isEmpty(string_result)) {
-                    ErrorInfo errorInfo = GsonUtil.gsonIntance().gsonToBean(string_result, ErrorInfo.class);
-                    if (errorInfo.getStatus() == 1) {
+                    UserInfo2 u2 = GsonUtil.gsonIntance().gsonToBean(string_result, UserInfo2.class);
+                    if (u2.getStatus() == 1) {
                         // Toast.makeText(MainActivity.this, "" + errorInfo.getData().toString(), Toast.LENGTH_SHORT).show();
                     }
 
@@ -292,11 +335,6 @@ public class MainActivity extends AppCompatActivity {
     public void addOrder(String sign) {
         PATH = "http://huifenbao.dequanhuibao.com/Api/Index/addorder?sign=" + sign;
         params = new RequestParams(PATH);
-//        params.addBodyParameter("idcard", idcard);
-//        params.addBodyParameter("name", name);
-//        params.addBodyParameter("mobile", mobile);
-//        params.addBodyParameter("money", money);
-
         Log.e("mian_addorder", PATH);
 
         x.http().post(params, new Callback.CommonCallback<String>() {
@@ -304,19 +342,15 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(String result) {
                 order_result = result;
                 Log.e("mian_addorder", result);
-                AddOrder addOrder = GsonUtil.gsonIntance().gsonToBean(result, AddOrder.class);
-                if (addOrder.getStatus() == 1) {
-                    phones(MainActivity.this, array, idcard);
-
+                UserInfo2 u2 = GsonUtil.gsonIntance().gsonToBean(result, UserInfo2.class);
+                if (u2.getStatus() == 1) {
                     Intent intent = new Intent(MainActivity.this, PayActivity.class);
-                    intent.putExtra("id", addOrder.getData());
+                    intent.putExtra("id", u2.getData());
                     startActivity(intent);
+                }
 
-                    actvIdcard.setText("");
-                    etName.setText("");
-                    etPhone.setText("");
-                    etMoney.setText("");
-
+                if (u2.getStatus() == 0) {
+                    Toast.makeText(MainActivity.this, "" + u2.getData(), Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -324,9 +358,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 if (!TextUtils.isEmpty(order_result)) {
-                    ErrorInfo errorInfo = GsonUtil.gsonIntance().gsonToBean(string_result, ErrorInfo.class);
-                    if (errorInfo.getStatus() == 1) {
-                        Toast.makeText(MainActivity.this, "" + errorInfo.getData().toString(), Toast.LENGTH_SHORT).show();
+                    UserInfo2 u2 = GsonUtil.gsonIntance().gsonToBean(string_result, UserInfo2.class);
+                    if (u2.getStatus() == 1) {
+                        Toast.makeText(MainActivity.this, "" + u2.getData().toString(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    if (u2.getStatus() == 0) {
+                        ToastUtils.getInstance(MainActivity.this).showMessage(u2.getData());
                     }
 
                 }

@@ -1,4 +1,4 @@
-package com.dq.huifenbao;
+package com.dq.huifenbao.bean;
 
 /**
  * Created by asus on 2018/3/31.
